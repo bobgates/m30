@@ -38,9 +38,12 @@ use stm32f3xx_hal::{prelude::*,
 			          stm32,
 			          // usb::{Peripheral, UsbBus},
 			       };   
-	     
+// use f3::Leds;	     
 
-mod led; //::Leds;
+/// Array of all the user LEDs on the board
+
+mod led;
+use led::Leds;
 
 #[entry]
 fn main() -> ! {
@@ -63,11 +66,14 @@ fn main() -> ! {
     
 	let stim = &mut cp.ITM.stim[0];
 	let mut delay = Delay::new(syst, clocks);
-	// let mut leds = led::Leds::new(gpioe);
+
 
 	let mut gpioa = p.GPIOA.split(&mut rcc.ahb);
    	let mut gpiob = p.GPIOB.split(&mut rcc.ahb);
-    let mut gpioe = p.GPIOE.split(&mut rcc.ahb);
+    let mut gpioe = p.GPIOE.split(&mut rcc.ahb); //.split(&mut rcc.ahb);
+
+	// let mut leds = led::Leds::new(gpioe);
+	// let mut gpioe = gpioe.split(&mut rcc.ahb);
 
     let scl = gpiob.pb6.into_af4(&mut gpiob.moder, &mut gpiob.afrl);
     let sda = gpiob.pb7.into_af4(&mut gpiob.moder, &mut gpiob.afrl);
@@ -84,18 +90,19 @@ fn main() -> ! {
     let miso = gpioa.pa6.into_af5(&mut gpioa.moder, &mut gpioa.afrl);
     let mosi = gpioa.pa7.into_af5(&mut gpioa.moder, &mut gpioa.afrl);
     let mut nss = gpioe.pe3.into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper);
-    nss.set_high().unwrap();
 
-    let spi = Spi::spi1(
-        p.SPI1,
-        (sck, miso, mosi),
-        l3gd20::MODE,
-        1.mhz(),
-        clocks,
-        &mut rcc.apb2,
-    );
-    let mut l3gd20 = L3gd20::new(spi, nss).unwrap();
-
+    let mut leds = Leds {
+        leds: [
+			gpioe.pe9.into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper).into(),
+		    gpioe.pe10.into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper).into(),
+		    gpioe.pe11.into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper).into(),
+		    gpioe.pe12.into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper).into(),
+		    gpioe.pe13.into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper).into(),
+		    gpioe.pe14.into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper).into(),
+		    gpioe.pe15.into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper).into(),
+		    gpioe.pe8.into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper).into(),
+        ],
+    };
 
     let bus = shared_bus::CortexMBusManager::new(i2c);
     let mut disp: GraphicsMode <_> = Builder::new()
@@ -136,8 +143,8 @@ fn main() -> ! {
     	 	count += 1;
     	}
     	
-    	// leds[i].on();
-    	// leds[k].off();
+    	leds[i].on();
+    	leds[k].off();
     	k=j;
     	j=i;
     	i = (i + 1) % 8
