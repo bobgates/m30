@@ -8,8 +8,8 @@ version = "0.1.0"
 [dependencies]
 cortex-m = "0.6.0"
 cortex-m-rt = "0.6.10"
-cortex-m-semihosting = "0.3.3"
-panic-halt = "0.2.0"
+cortex-m-semihosting = "0.3.1"
+# panic-halt = "0.2.0"
 
 # [dependencies.f3]
 # version = "0.6.1"
@@ -21,8 +21,8 @@ version = "0.4.1"
 version = "0.5.1"
 
 [dependencies.l3gd20]
-version = "0.2.0"
-# path = "../l3gd20"
+# version = "0.2.0"
+path = "../l3gd20"
 
 [dependencies.lsm303dlhc]
 version = "0.2.0"
