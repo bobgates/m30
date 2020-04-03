@@ -58,36 +58,38 @@ pub enum Direction {
 
 /// Array of all the user LEDs on the board
 pub struct Leds {
-    leds: [Led; 8],
+  pub leds: [Led; 8],
 }
 
 impl Leds {
     /// Initializes all the user LEDs
-    pub fn new(mut gpioe: gpioe::Parts) -> Self {
+    pub fn new( gpioe: gpioe::Parts,
+                mut moder : &mut stm32f3xx_hal::gpio::gpioe::MODER, 
+                mut otyper : &mut stm32f3xx_hal::gpio::gpioe::OTYPER) -> Self {
         let n = gpioe
             .pe9
-            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper);
+            .into_push_pull_output(&mut moder, &mut otyper);
         let ne = gpioe
             .pe10
-            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper);
+            .into_push_pull_output(&mut moder, &mut otyper);
         let e = gpioe
             .pe11
-            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper);
+            .into_push_pull_output(&mut moder, &mut otyper);
         let se = gpioe
             .pe12
-            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper);
+            .into_push_pull_output(&mut moder, &mut otyper);
         let s = gpioe
             .pe13
-            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper);
+            .into_push_pull_output(&mut moder, &mut otyper);
         let sw = gpioe
             .pe14
-            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper);
+            .into_push_pull_output(&mut moder, &mut otyper);
         let w = gpioe
             .pe15
-            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper);
+            .into_push_pull_output(&mut moder, &mut otyper);
         let nw = gpioe
             .pe8
-            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper);
+            .into_push_pull_output(&mut moder, &mut otyper);
 
         Leds {
             leds: [
