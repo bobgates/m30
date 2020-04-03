@@ -90,6 +90,15 @@ fn main() -> ! {
     let miso = gpioa.pa6.into_af5(&mut gpioa.moder, &mut gpioa.afrl);
     let mosi = gpioa.pa7.into_af5(&mut gpioa.moder, &mut gpioa.afrl);
     let mut nss = gpioe.pe3.into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper);
+    let spi = Spi::spi1(
+        p.SPI1,
+        (sck, miso, mosi),
+        l3gd20::MODE,
+        1.mhz(),
+        clocks,
+        &mut rcc.apb2,
+    );
+    let mut l3gd20 = L3gd20::new(spi, nss).unwrap();
 
     let mut leds = Leds {
         leds: [
@@ -130,6 +139,7 @@ fn main() -> ! {
     iprintln!(stim, "lsm303 initialized");
 
 
+    l3gd20.set_odr(Odr::Hz380).unwrap();
 
     let half_period = 150_u16;
     let mut count = 0;
